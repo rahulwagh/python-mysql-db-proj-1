@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask REST API UI</title>
+</head>
+<body>
+<h1>Flask REST API UI</h1>
+
+<h2>Insert Record</h2>
+<form id="insertForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+    <button type="button" onclick="insertRecord()">Insert Record</button>
+</form>
+
+<h2>View Data</h2>
+<ul id="dataList"></ul>
+
+<script>
+    function insertRecord() {
+        const name = document.getElementById('name').value;
+        fetch('/insert_record', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 'name': name }),
+        })
+        .then(response => response.text())
+        .then(data => {
+            alert(data);
+            loadData();
+        });
+    }
+
+    function loadData() {
+        fetch('/data')
+        .then(response => response.json())
+        .then(data => {
+            const dataList = document.getElementById('dataList');
+            dataList.innerHTML = '';
+            data.forEach(record => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `ID: ${record.id}, Name: ${record.name}`;
+                dataList.appendChild(listItem);
+            });
+        });
+    }
+
+    // Load initial data when the page is loaded
+    loadData();
+</script>
+</body>
+</html>
